@@ -162,29 +162,12 @@
 
   var cite = document.getElementById("cite-count");
   if (cite) {
-    var scholar = "https://scholar.google.com/citations?user=NSNwmmQAAAAJ&hl=en&view_op=list_works";
-    var proxies = [
-      "https://api.allorigins.win/raw?url=" + encodeURIComponent(scholar),
-      "https://corsproxy.io/?" + encodeURIComponent(scholar)
-    ];
-    function readCount(i) {
-      if (i >= proxies.length) return;
-      var ctrl = new AbortController();
-      var timer = setTimeout(function () { ctrl.abort(); }, 8000);
-      fetch(proxies[i], { signal: ctrl.signal })
-        .then(function (res) { return res.text(); })
-        .then(function (text) {
-          clearTimeout(timer);
-          var match = text.match(/gsc_rsb_std[^>]*>([\d,]+)/);
-          var count = match ? parseInt(match[1].replace(/,/g, ""), 10) : 0;
-          if (count >= 50 && count < 1000000) cite.textContent = String(count);
-          else readCount(i + 1);
-        })
-        .catch(function () {
-          clearTimeout(timer);
-          readCount(i + 1);
-        });
-    }
-    readCount(0);
+    fetch("assets/citations.json?t=" + Date.now())
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        var count = parseInt(data && data.citations, 10);
+        if (count >= 50 && count < 1000000) cite.textContent = String(count);
+      })
+      .catch(function () {});
   }
 })();
