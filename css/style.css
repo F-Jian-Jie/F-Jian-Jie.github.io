@@ -568,6 +568,11 @@ footer.colophon {
   font-size: 13px;
 }
 
+footer.colophon .visits {
+  color: inherit;
+  font-size: inherit;
+}
+
 @media (max-width: 980px) {
   .timeline li,
   .news li { grid-template-columns: 1fr; gap: 2px; }
