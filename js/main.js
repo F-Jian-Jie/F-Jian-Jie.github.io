@@ -171,3 +171,21 @@
       .catch(function () {});
   }
 })();
+
+(function () {
+  var slot = document.getElementById("vercount_value_site_pv");
+  if (!slot || location.hostname !== "f-jian-jie.github.io") return;
+  var key = "vercount_uv_" + location.hostname.replace(/[^a-zA-Z0-9_-]/g, "_");
+  var seen = document.cookie.split("; ").some(function (item) {
+    return item.indexOf(key + "=1") === 0;
+  });
+  if (!seen) document.cookie = key + "=1; path=/; max-age=31536000; samesite=lax";
+  fetch("https://events.vercount.one/api/v2/log", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ url: location.href, isNewUv: !seen })
+  }).then(function (res) { return res.json(); }).then(function (data) {
+    var count = data && data.data && data.data.site_pv;
+    if (typeof count === "number" && count >= 0) slot.textContent = String(count);
+  }).catch(function () {});
+})();
